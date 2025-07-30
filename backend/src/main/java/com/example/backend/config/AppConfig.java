@@ -45,22 +45,25 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
-public class AppConfig implements WebMvcConfigurer , WebSecurityCustomizer {
+public class AppConfig implements WebMvcConfigurer, WebSecurityCustomizer {
 
-    private String[] WHITE_LIST = {"/api/image","/api/auth/**", "/api/users/**",
-            "/api/categories","/api/categories/**",
+    private String[] WHITE_LIST = { "/api/image", "/api/auth/**", "/api/users/**",
+            "/api/categories", "/api/categories/**",
             "/api/showing-times/*/layout", "/api/events/showing-times/*/layout", "/api/events/detail/**",
-            "/api/event-ads/active-today","/api/events/detail/{eventId}","/api/events/home", "/api/events/public","/api/reviews/**", "/api/revenue/**","/api/events/deposit/verify   "};
-    private String[] SECURE_DOCUMENTS_LIST = {"/api/secure-documents/**"};
-    private String[] ORGANIZER_LIST = {"/api/organizer/**","/api/event-ads/*"};
+            "/api/event-ads/active-today", "/api/events/detail/{eventId}", "/api/events/home", "/api/events/public",
+            "/api/reviews/**", "/api/revenue/**", "/api/events/deposit/verify   " };
+    private String[] SECURE_DOCUMENTS_LIST = { "/api/secure-documents/**" };
+    private String[] ORGANIZER_LIST = { "/api/organizer/**", "/api/event-ads/*" };
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final PreFilter preFilter;
     private final UserDetailService userDetailService;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5173", "https://testdeployevent-1.onrender.com")
+                .allowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5173",
+                        "https://testdeployevent-1.onrender.com")
                 .allowCredentials(true)
                 .allowedHeaders("*")
                 .allowedMethods("*")
@@ -77,8 +80,7 @@ public class AppConfig implements WebMvcConfigurer , WebSecurityCustomizer {
         return httpSecurity.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                )
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(WHITE_LIST).permitAll()
@@ -86,8 +88,10 @@ public class AppConfig implements WebMvcConfigurer , WebSecurityCustomizer {
                         .requestMatchers(ORGANIZER_LIST).hasAnyRole("ORGANIZER")
                         .requestMatchers("/api/bookings/history").hasAnyRole("USER", "ADMIN", "ORGANIZER")
                         .anyRequest().authenticated())
-                .authenticationProvider(provider()).addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(provider())
+                .addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(
+                        sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
@@ -107,9 +111,11 @@ public class AppConfig implements WebMvcConfigurer , WebSecurityCustomizer {
     @Override
     public void customize(WebSecurity webSecurity) {
         webSecurity.ignoring()
-                .requestMatchers("/actuator/**", "/v3/**", "/webjars/**", "/swagger-ui*/*swagger-initializer.js", "/swagger-ui*/**");
+                .requestMatchers("/actuator/**", "/v3/**", "/webjars/**", "/swagger-ui*/*swagger-initializer.js",
+                        "/swagger-ui*/**");
 
     }
+
     @Bean
     public RestTemplate restTemplate() {
         RequestConfig config = RequestConfig.custom()
@@ -131,7 +137,7 @@ public class AppConfig implements WebMvcConfigurer , WebSecurityCustomizer {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .enable(JsonParser.Feature.ALLOW_COMMENTS)       // ← chấp nhận // ...
+                .enable(JsonParser.Feature.ALLOW_COMMENTS) // ← chấp nhận // ...
                 .enable(JsonParser.Feature.ALLOW_TRAILING_COMMA) // ← chấp nhận dấu , thừa
                 .enable(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER);
     }
