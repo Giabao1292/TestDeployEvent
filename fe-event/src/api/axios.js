@@ -7,7 +7,9 @@ import {
 } from "../utils/storage";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api/",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://testdeployevent.onrender.com/api/",
   timeout: 10000,
 });
 
@@ -79,7 +81,10 @@ apiClient.interceptors.response.use(
       try {
         // Gọi refresh token
         const response = await axios.post(
-          "http://localhost:8080/api/auth/refresh-token",
+          `${
+            import.meta.env.VITE_API_BASE_URL ||
+            "https://testdeployevent.onrender.com/api"
+          }/auth/refresh-token`,
           null,
           {
             headers: {

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { saveToken } from "../utils/storage";
 import CategoryNav from "../ui/CategoryNav";
 import EventCard from "../ui/EventCard";
-import { wishlistService } from "../services/wishlistServices";
+import wishlistService from "../services/wishlistServices";
 import {
   getCategories,
   getEventsByCategory,
@@ -14,9 +14,9 @@ import {
 import { getActiveAdsToday } from "../services/adsService";
 import { getHomeEvents, getRecommendedEvents } from "../services/eventService";
 import AdEventCard from "../ui/AdEventCard";
-import BackgroundEffect from "../ui/BackGround";
+import BackgroundEffect from "../ui/Background";
 import SearchBar from "../components/home/SearchBar";
-import backGround from "../assets/images/background/background.png";
+import background from "../assets/images/background/background.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useAuth from "../hooks/useAuth";
@@ -292,7 +292,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen text-white text-sm md:text-base relative overflow-hidden">
-      <BackgroundEffect image={backGround} />
+      <BackgroundEffect image={background} />
 
       {notification && (
         <div

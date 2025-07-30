@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ViewBookingHistoryService from "../services/ViewBookingHistoryServices";
-import BackgroundEffect from "../ui/BackGround";
+import BackgroundEffect from "../ui/Background";
 import backgroundImage from "../assets/images/background/background.png";
 import { Input } from "../components/ui/input";
 import {
@@ -16,7 +16,7 @@ import {
   CreditCard,
   Star,
 } from "lucide-react";
-import QrCodeService from "../services/qrCodeService";
+import QrCodeService from "../services/QrCodeService";
 import jsPDF from "jspdf";
 import ReviewSection from "../components/review/ReviewSection";
 

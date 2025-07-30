@@ -3,8 +3,8 @@ import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import BackgroundEffect from "../ui/BackGround";
-import backGround from "../assets/images/background/background.png";
+import BackgroundEffect from "../ui/Background";
+import background from "../assets/images/background/background.png";
 import wishlistService from "../services/wishlistServices";
 import EventCard from "../ui/EventCard";
 import useAuth from "../hooks/useAuth"; // Import useAuth
@@ -72,7 +72,7 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      <BackgroundEffect image={backGround} />
+      <BackgroundEffect image={background} />
 
       <div className="text-center py-12 px-4 relative z-10">
         <div className="bg-black/50 backdrop-blur-sm rounded-2xl p-8 mx-auto max-w-4xl border border-gray-800/50">

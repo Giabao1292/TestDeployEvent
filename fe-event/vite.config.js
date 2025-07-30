@@ -7,10 +7,17 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080", // địa chỉ backend Spring Boot của bạn
+        target:
+          process.env.VITE_API_BASE_URL ||
+          "https://testdeployevent.onrender.com", // địa chỉ backend Spring Boot của bạn
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
+  },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    sourcemap: false,
   },
 });
