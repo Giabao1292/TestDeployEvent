@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header"; // Đảm bảo bạn đã import Header
 import Footer from "./Footer"; // Đảm bảo bạn đã import Footer
 import { Outlet } from "react-router-dom";
-import AppTopStrip from "./AppTopStrip"; // Import AppTopStrip nếu cần
+import AppTopstrip from "./AppTopstrip"; // Import AppTopstrip
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Mặc định sidebar mở
 
@@ -17,7 +17,7 @@ const AdminLayout = ({ children }) => {
     <div className="bg-surface">
       <main>
         <div className="app-topstrip z-40 sticky top-0 py-[15px] px-6 bg-[linear-gradient(90deg,_#0f0533_0%,_#1b0a5c_100%)]">
-          <AppTopStrip />
+          <AppTopstrip />
         </div>
         <div id="main-wrapper" className="flex p-5 xl:pr-0">
           <aside
