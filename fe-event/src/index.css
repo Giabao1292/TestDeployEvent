@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .container {
+    @apply max-w-7xl;
+  }
+  .card {
+    @apply rounded-md shadow-md bg-white relative;
+  }
+  .card-body {
+    @apply p-6;
+  }
+  .hs-dropdown-menu {
+    @apply shadow-sm bg-white relative rounded-md;
+  }
+
+  .btn {
+    @apply rounded-2xl bg-blue-600 text-white text-sm py-3 px-7 text-center;
+  }
+  .btn-outline-primary {
+    @apply rounded-2xl border py-2.5 px-7 border-blue-600 text-blue-600 text-sm  text-center;
+  }
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideFadeIn {
+  animation: slideFadeIn 0.25s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
