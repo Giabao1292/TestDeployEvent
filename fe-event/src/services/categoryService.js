@@ -20,6 +20,11 @@ export const getCategories = async () => {
 };
 
 export const getEventsByCategory = async (categoryId) => {
+  if (!categoryId || categoryId === undefined || categoryId === null) {
+    console.warn("CategoryId is undefined or null, skipping API call");
+    return [];
+  }
+
   try {
     const res = await apiClient.get(`/categories/${categoryId}/poster-images`);
     return res.data.data || [];

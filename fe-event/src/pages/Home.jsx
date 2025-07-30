@@ -203,8 +203,10 @@ export default function Home() {
         const eventsMap = {};
         await Promise.all(
           cats.map(async (cat) => {
-            const events = await getEventsByCategory(cat.categoryId);
-            eventsMap[cat.categoryId] = events;
+            if (cat.categoryId !== undefined && cat.categoryId !== null) {
+              const events = await getEventsByCategory(cat.categoryId);
+              eventsMap[cat.categoryId] = events;
+            }
           })
         );
         setEventsByCategory(eventsMap);

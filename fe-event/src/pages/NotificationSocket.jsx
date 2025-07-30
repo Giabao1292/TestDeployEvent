@@ -21,7 +21,7 @@ export default function NotificationTest() {
       return;
     }
 
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS("https://testdeployevent.onrender.com/ws");
     stompClient = over(socket);
 
     stompClient.connect(

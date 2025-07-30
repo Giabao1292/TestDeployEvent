@@ -31,7 +31,7 @@ const useChat = () => {
     }
 
     try {
-      const socket = new SockJS("http://localhost:8080/ws");
+      const socket = new SockJS("https://testdeployevent.onrender.com/ws");
       stompClientRef.current = over(socket);
 
       stompClientRef.current.connect(

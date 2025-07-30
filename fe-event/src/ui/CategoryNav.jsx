@@ -9,7 +9,7 @@ const CategoryNav = ({ onSelectCategory, selectedCategoryId }) => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/categories"
+          "https://testdeployevent.onrender.com/api/categories"
         );
         if (Array.isArray(response.data.data)) {
           setCategories(response.data.data);
