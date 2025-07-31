@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/events")
@@ -45,10 +44,8 @@ public class EventController {
     public ResponseEntity<ResponseData<Map<String, List<EventHomeDTO>>>> getHomeEvents() {
         Map<String, List<EventHomeDTO>> result = eventService.getHomeEventsGroupedByStatus();
         return ResponseEntity.ok(
-                new ResponseData<>(200, "Lấy sự kiện trang chủ thành công", result)
-        );
+                new ResponseData<>(200, "Lấy sự kiện trang chủ thành công", result));
     }
-
 
     @PreAuthorize("hasRole('ORGANIZER')")
     @PostMapping("/create")
@@ -66,8 +63,7 @@ public class EventController {
         return new ResponseData<>(
                 HttpStatus.OK.value(),
                 "Event submitted successfully with PENDING status",
-                submittedEvent
-        );
+                submittedEvent);
     }
 
     @PreAuthorize("hasRole('ORGANIZER')")
@@ -87,8 +83,8 @@ public class EventController {
                         .orderCode(System.currentTimeMillis())
                         .amount(amount)
                         .description(description)
-                        .returnUrl("http://localhost:5173/deposit-result?eventId=" + eventId)
-                        .cancelUrl("http://localhost:5173/deposit-cancel")
+                        .returnUrl("https://testdeployevent-1.onrender.com/deposit-result?eventId=" + eventId)
+                        .cancelUrl("https://testdeployevent-1.onrender.com/deposit-cancel")
                         .build();
                 CheckoutResponseData payosData = payOS.createPaymentLink(paymentData);
                 checkoutUrl = payosData.getCheckoutUrl();
@@ -102,8 +98,7 @@ public class EventController {
 
             return new ResponseData<>(200, "Tạo liên kết đặt cọc thành công", Map.of(
                     "checkoutUrl", checkoutUrl,
-                    "paymentId", paymentId
-            ));
+                    "paymentId", paymentId));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseData<>(500, "Lỗi tạo liên kết đặt cọc: " + e.getMessage(), null);
@@ -129,7 +124,8 @@ public class EventController {
 
             if (isPaid) {
                 Event submittedEvent = eventService.submitEvent(eventId);
-                return new ResponseData<>(200, "Thanh toán đặt cọc thành công, sự kiện đã được gửi", submittedEvent.getId());
+                return new ResponseData<>(200, "Thanh toán đặt cọc thành công, sự kiện đã được gửi",
+                        submittedEvent.getId());
             } else {
                 return new ResponseData<>(400, "Thanh toán đặt cọc chưa hoàn thành", null);
             }
@@ -142,8 +138,7 @@ public class EventController {
     @GetMapping("/detail/{eventId}")
     public ResponseEntity<ResponseData<EventDetailDTO>> getEventDetail(
             @PathVariable int eventId,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         String userEmail = authentication != null ? authentication.getName() : null;
         EventDetailDTO dto = eventService.getEventDetailById(eventId, userEmail);
         return ResponseEntity.ok(new ResponseData<>(200, "Lấy chi tiết sự kiện thành công", dto));
@@ -167,7 +162,8 @@ public class EventController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
-    public ResponseData<PageResponse<EventSummaryAdmin>> searchEvent(Pageable pageable, @RequestParam(name = "search", required = false) String... search) {
+    public ResponseData<PageResponse<EventSummaryAdmin>> searchEvent(Pageable pageable,
+            @RequestParam(name = "search", required = false) String... search) {
         PageResponse<EventSummaryAdmin> listEvents = eventService.searchEvent(pageable, search);
         return new ResponseData<>(HttpStatus.OK.value(), "Get list of events", listEvents);
     }
@@ -194,38 +190,38 @@ public class EventController {
 
         try {
             Event updatedEvent = eventService.editEvent(eventId, request);
-            
+
             // Tạo response data với event và showing times
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("eventId", updatedEvent.getId());
-            
+
             // Thêm showing times với ID đã được tạo
             if (updatedEvent.getTblShowingTimes() != null && !updatedEvent.getTblShowingTimes().isEmpty()) {
                 List<Map<String, Object>> showingTimesData = updatedEvent.getTblShowingTimes().stream()
-                    .map(st -> {
-                        Map<String, Object> stData = new HashMap<>();
-                        stData.put("id", st.getId());
-                        stData.put("startTime", st.getStartTime());
-                        stData.put("endTime", st.getEndTime());
-                        stData.put("saleOpenTime", st.getSaleOpenTime());
-                        stData.put("saleCloseTime", st.getSaleCloseTime());
-                        stData.put("layoutMode", st.getLayoutMode());
-                        
-                        if (st.getAddress() != null) {
-                            Map<String, Object> addressData = new HashMap<>();
-                            addressData.put("id", st.getAddress().getId());
-                            addressData.put("venueName", st.getAddress().getVenueName());
-                            addressData.put("location", st.getAddress().getLocation());
-                            addressData.put("city", st.getAddress().getCity());
-                            stData.put("address", addressData);
-                        }
-                        
-                        return stData;
-                    })
-                    .collect(java.util.stream.Collectors.toList());
+                        .map(st -> {
+                            Map<String, Object> stData = new HashMap<>();
+                            stData.put("id", st.getId());
+                            stData.put("startTime", st.getStartTime());
+                            stData.put("endTime", st.getEndTime());
+                            stData.put("saleOpenTime", st.getSaleOpenTime());
+                            stData.put("saleCloseTime", st.getSaleCloseTime());
+                            stData.put("layoutMode", st.getLayoutMode());
+
+                            if (st.getAddress() != null) {
+                                Map<String, Object> addressData = new HashMap<>();
+                                addressData.put("id", st.getAddress().getId());
+                                addressData.put("venueName", st.getAddress().getVenueName());
+                                addressData.put("location", st.getAddress().getLocation());
+                                addressData.put("city", st.getAddress().getCity());
+                                stData.put("address", addressData);
+                            }
+
+                            return stData;
+                        })
+                        .collect(java.util.stream.Collectors.toList());
                 responseData.put("showingTimes", showingTimesData);
             }
-            
+
             return ResponseEntity
                     .ok(new ResponseData<>(200, "Chỉnh sửa thông tin sự kiện thành công", responseData));
         } catch (ResourceNotFoundException e) {
@@ -261,10 +257,8 @@ public class EventController {
                 .map(EventSummaryDTO::new) // sử dụng constructor EventSummaryDTO(Event event)
                 .toList();
         return ResponseEntity.ok(
-                new ResponseData<>(200, "Lấy danh sách sự kiện thành công", eventDTOs)
-        );
+                new ResponseData<>(200, "Lấy danh sách sự kiện thành công", eventDTOs));
     }
-
 
     @GetMapping("/organizer/{organizerId}/status/{statusId}")
     public ResponseEntity<ResponseData<List<EventSummaryDTO>>> getEventsByStatus(
@@ -276,20 +270,22 @@ public class EventController {
                 .toList();
 
         return ResponseEntity.ok(
-                new ResponseData<>(200, "Lấy danh sách sự kiện theo trạng thái thành công", eventDTOs)
-        );
+                new ResponseData<>(200, "Lấy danh sách sự kiện theo trạng thái thành công", eventDTOs));
     }
 
     @PreAuthorize("hasAnyRole({'ORGANIZER', 'ADMIN'})")
     @GetMapping("/{eventId}/attendees")
-    public ResponseData<PageResponse<AttendeeResponse>> searchAttendee(Pageable pageable, @PathVariable("eventId") int eventId, @RequestParam("startTime") LocalDateTime startTime, String... search) {
+    public ResponseData<PageResponse<AttendeeResponse>> searchAttendee(Pageable pageable,
+            @PathVariable("eventId") int eventId, @RequestParam("startTime") LocalDateTime startTime,
+            String... search) {
         PageResponse<AttendeeResponse> response = bookingService.searchAttendees(pageable, eventId, startTime, search);
         return new ResponseData<>(HttpStatus.OK.value(), "Get list attendees successful", response);
     }
 
     @PreAuthorize("hasAnyRole({'ORGANIZER', 'ADMIN'})")
     @GetMapping("/{eventId}/analytics")
-    public ResponseData<AnalyticAttendeesResponse> getAnalytics(@PathVariable("eventId") int eventId, @RequestParam("startTime") LocalDateTime startTime) {
+    public ResponseData<AnalyticAttendeesResponse> getAnalytics(@PathVariable("eventId") int eventId,
+            @RequestParam("startTime") LocalDateTime startTime) {
         AnalyticAttendeesResponse response = bookingService.getAnalytics(eventId, startTime);
         return new ResponseData<>(HttpStatus.OK.value(), "Get list attendees successful", response);
     }
@@ -302,11 +298,11 @@ public class EventController {
     }
 
     @GetMapping("/public")
-    public ResponseData<List<EventHomeDTO>> userSearchEvents(@RequestParam(name = "search", required = false) String... search) {
+    public ResponseData<List<EventHomeDTO>> userSearchEvents(
+            @RequestParam(name = "search", required = false) String... search) {
         List<EventHomeDTO> listEvents = eventService.userSearchEvent(search);
         return new ResponseData<>(HttpStatus.OK.value(), "Get list of events", listEvents);
     }
-
 
     @GetMapping("/reviewable")
     public ResponseEntity<ResponseData<List<EventResponse>>> getEventsForReviewByCategory(
@@ -320,9 +316,9 @@ public class EventController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Integer categoryId
-    ) {
-        PageResponse<EventResponse> responses = eventService.getEventsForReviewAllCategoriesPaged(page, size, search, categoryId);
+            @RequestParam(required = false) Integer categoryId) {
+        PageResponse<EventResponse> responses = eventService.getEventsForReviewAllCategoriesPaged(page, size, search,
+                categoryId);
         return ResponseEntity.ok(new ResponseData<>(200, "Lấy sự kiện review thành công", responses));
     }
 

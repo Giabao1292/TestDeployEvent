@@ -28,13 +28,14 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final ImageService imageService;
+
     public void sendConfirmEmail(UserTemp user) throws MessagingException {
         log.info("Sending confirm email with verify code {}", user.getVerificationToken());
         MimeMessage messsage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(messsage, true, "UTF-8");
         Context context = new Context();
         Map<String, Object> properties = new HashMap<>();
-        String link = "http://localhost:5173/verify-email?verifyToken=" + user.getVerificationToken();
+        String link = "https://testdeployevent-1.onrender.com/verify-email?verifyToken=" + user.getVerificationToken();
         properties.put("linkVerifyToken", link);
         properties.put("fullName", user.getFullName());
         context.setVariables(properties);
@@ -47,7 +48,7 @@ public class MailService {
     }
 
     public void sendResetPasswordEmail(String toEmail, String token) throws MessagingException {
-        String resetLink = "http://localhost:5173/reset-password?token=" + token;
+        String resetLink = "https://testdeployevent-1.onrender.com/reset-password?token=" + token;
         String subject = "Đặt lại mật khẩu tài khoản của bạn";
         String content = "Xin chào,<br>"
                 + "Bạn nhận được email này vì đã yêu cầu đặt lại mật khẩu.<br>"
@@ -64,13 +65,13 @@ public class MailService {
 
         mailSender.send(message);
     }
+
     public void sendTrackingEventEmail(User user, Event event) throws MessagingException {
         Set<ShowingTime> showingTimes = event.getTblShowingTimes();
 
         Optional<ShowingTime> firstTime = showingTimes.stream()
                 .sorted(Comparator.comparing(ShowingTime::getStartTime))
                 .findFirst();
-
 
         if (firstTime.isEmpty()) {
             log.warn("Không tìm thấy lịch diễn cho sự kiện: {}", event.getEventTitle());
@@ -101,7 +102,9 @@ public class MailService {
         mailSender.send(message);
         log.info("Đã gửi email thông báo theo dõi sự kiện cho {}", user.getEmail());
     }
-    public void sendSimpleReminder(String email, String eventTitle, String type, LocalDateTime time) throws MessagingException {
+
+    public void sendSimpleReminder(String email, String eventTitle, String type, LocalDateTime time)
+            throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -123,7 +126,7 @@ public class MailService {
 
     @Async
     public void sendRescheduleEmailAsync(String toEmail, String eventTitle, String oldStartTime,
-                                         String oldEndTime, String newStartTime, String newEndTime) {
+            String oldEndTime, String newStartTime, String newEndTime) {
         log.info("sendRescheduleEmailAsync called for email: {}", toEmail);
         try {
             // Giả sử sendRescheduleEmail nhận 6 tham số (không có fullName)
@@ -134,10 +137,8 @@ public class MailService {
         }
     }
 
-
-
     public void sendRescheduleEmail(String toEmail, String eventTitle, String oldStartTime,
-                                    String oldEndTime, String newStartTime, String newEndTime) throws MessagingException {
+            String oldEndTime, String newStartTime, String newEndTime) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -145,7 +146,7 @@ public class MailService {
         Map<String, Object> properties = new HashMap<>();
 
         // Nếu bạn có tên người dùng thì thêm vào context, hoặc để mặc định "Bạn"
-        properties.put("fullName", "Bạn");  // Hoặc lấy từ param nếu có
+        properties.put("fullName", "Bạn"); // Hoặc lấy từ param nếu có
         properties.put("eventTitle", eventTitle);
         properties.put("oldStartTime", oldStartTime);
         properties.put("oldEndTime", oldEndTime);
@@ -161,8 +162,8 @@ public class MailService {
         mailSender.send(message);
     }
 
-
-    public void sendRejectRescheduleEmail(String toEmail, String fullName, String eventTitle, String rejectReason) throws MessagingException {
+    public void sendRejectRescheduleEmail(String toEmail, String fullName, String eventTitle, String rejectReason)
+            throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -178,6 +179,7 @@ public class MailService {
 
         mailSender.send(message);
     }
+
     public void sendBookingConfirmationEmail(User user, Booking booking) {
         log.info("Sending booking confirmation email to {} for booking ID {}", user.getEmail(), booking.getId());
         try {
@@ -189,13 +191,16 @@ public class MailService {
             properties.put("fullName", user.getFullName() != null ? user.getFullName() : "Khách hàng");
             properties.put("eventTitle", booking.getShowingTime().getEvent().getEventTitle());
             properties.put("bookingId", booking.getId());
-            properties.put("bookingDate", booking.getCreatedDatetime().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")));
-            properties.put("eventDate", booking.getShowingTime().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")));
+            properties.put("bookingDate",
+                    booking.getCreatedDatetime().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")));
+            properties.put("eventDate",
+                    booking.getShowingTime().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")));
             properties.put("finalPrice", booking.getFinalPrice());
 
             // Địa chỉ sự kiện
             String address = booking.getShowingTime().getAddress() != null
-                    ? booking.getShowingTime().getAddress().getVenueName() + " - " + booking.getShowingTime().getAddress().getLocation()
+                    ? booking.getShowingTime().getAddress().getVenueName() + " - "
+                            + booking.getShowingTime().getAddress().getLocation()
                     : "Không rõ địa điểm";
             properties.put("address", address);
 
@@ -254,7 +259,5 @@ public class MailService {
 
         mailSender.send(message);
     }
-
-
 
 }

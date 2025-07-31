@@ -63,8 +63,8 @@ public class BookingController {
                         .orderCode(Long.valueOf(bookingId))
                         .amount(amount)
                         .description(description)
-                        .returnUrl("http://localhost:5173/payment-result?orderId=" + bookingId)
-                        .cancelUrl("http://localhost:5173/payment-cancel")
+                        .returnUrl("https://testdeployevent-1.onrender.com/payment-result?orderId=" + bookingId)
+                        .cancelUrl("https://testdeployevent-1.onrender.com/payment-cancel")
                         .build();
                 CheckoutResponseData payosData = payOS.createPaymentLink(paymentData);
                 checkoutUrl = payosData.getCheckoutUrl();
@@ -84,9 +84,9 @@ public class BookingController {
 
     @GetMapping("/verify")
     public ResponseData<?> verify(@RequestParam Integer orderId,
-                                  @RequestParam String paymentMethod,
-                                  @RequestParam(required = false) String vnp_ResponseCode,
-                                  HttpServletRequest request) {
+            @RequestParam String paymentMethod,
+            @RequestParam(required = false) String vnp_ResponseCode,
+            HttpServletRequest request) {
         try {
             if ("PAYOS".equalsIgnoreCase(paymentMethod)) {
                 PaymentLinkData payment = payOS.getPaymentLinkInformation(Long.valueOf(orderId));
@@ -124,8 +124,7 @@ public class BookingController {
         try {
             String username = jwtService.extractUsername(
                     request.getHeader("Authorization").substring(7),
-                    TokenType.ACCESS_TOKEN
-            );
+                    TokenType.ACCESS_TOKEN);
 
             List<BookingHistoryDTO> history = bookingService.getBookingHistory(username);
             return new ResponseData<>(HttpStatus.OK.value(), "Lấy lịch sử đặt vé thành công", history);
@@ -139,6 +138,7 @@ public class BookingController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow();
         List<Integer> showingTimeIds = bookingService.getConfirmedShowingTimeIdsByUserId(user.getId());
-        return ResponseEntity.ok(new ResponseData<>(200, "Lấy danh sách suất chiếu đã xác nhận thành công", showingTimeIds));
+        return ResponseEntity
+                .ok(new ResponseData<>(200, "Lấy danh sách suất chiếu đã xác nhận thành công", showingTimeIds));
     }
 }

@@ -35,7 +35,8 @@ public class EventAdsController {
     private final PayOS payOS;
 
     @PostMapping("/create-and-pay")
-    public ResponseData<?> createAndPayAds(@RequestBody @Valid EventAdsRequest request, HttpServletRequest httpRequest) {
+    public ResponseData<?> createAndPayAds(@RequestBody @Valid EventAdsRequest request,
+            HttpServletRequest httpRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -44,7 +45,7 @@ public class EventAdsController {
             Integer adsId = saved.getId();
             String checkoutUrl;
             String paymentMethod = request.getPaymentMethod();
-             Integer amount = request.getTotalPrice().intValue();
+            Integer amount = request.getTotalPrice().intValue();
             String description = "Quảng cáo sự kiện #" + request.getEventId();
 
             if ("PAYOS".equalsIgnoreCase(paymentMethod)) {
@@ -52,8 +53,8 @@ public class EventAdsController {
                         .orderCode(adsId.longValue())
                         .amount(amount)
                         .description(description)
-                        .returnUrl("http://localhost:5173/organizer/payment-ads-result?adsId=" + adsId)
-                        .cancelUrl("http://localhost:5173/ads-payment-cancel")
+                        .returnUrl("https://testdeployevent-1.onrender.com/organizer/payment-ads-result?adsId=" + adsId)
+                        .cancelUrl("https://testdeployevent-1.onrender.com/ads-payment-cancel")
                         .build();
                 CheckoutResponseData payosData = payOS.createPaymentLink(paymentData);
                 checkoutUrl = payosData.getCheckoutUrl();
@@ -66,8 +67,7 @@ public class EventAdsController {
             // 3. Trả về link thanh toán
             return new ResponseData<>(200, "Tạo quảng cáo và link thanh toán thành công", Map.of(
                     "adsId", adsId,
-                    "checkoutUrl", checkoutUrl
-            ));
+                    "checkoutUrl", checkoutUrl));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseData<>(500, "Lỗi: " + e.getMessage(), null);
@@ -79,8 +79,7 @@ public class EventAdsController {
             @RequestParam("adsId") Integer adsId,
             @RequestParam("paymentMethod") String paymentMethod,
             @RequestParam(value = "vnp_ResponseCode", required = false) String responseCode,
-            @RequestParam(value = "vnp_TransactionNo", required = false) String transactionNo
-    ) {
+            @RequestParam(value = "vnp_TransactionNo", required = false) String transactionNo) {
         try {
             if ("PAYOS".equalsIgnoreCase(paymentMethod)) {
                 PaymentLinkData payment = payOS.getPaymentLinkInformation(adsId.longValue());
@@ -133,6 +132,7 @@ public class EventAdsController {
             return new ResponseData<>(500, "Lỗi khi lấy danh sách quảng cáo: " + e.getMessage(), null);
         }
     }
+
     @GetMapping("/active-today")
     public ResponseData<?> getActiveAdsToday() {
         try {
@@ -153,8 +153,8 @@ public class EventAdsController {
     @PutMapping("/review/{adsId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseData<?> reviewAds(@PathVariable Integer adsId,
-                                     @RequestParam EventAds.AdsStatus status,
-                                     @RequestParam(required = false) String reason) {
+            @RequestParam EventAds.AdsStatus status,
+            @RequestParam(required = false) String reason) {
         try {
             eventAdsService.reviewAds(adsId, status, reason);
             return new ResponseData<>(200, "Xử lý duyệt quảng cáo thành công", null);

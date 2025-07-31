@@ -49,7 +49,7 @@ public class VNPayService {
         vnp_Params.put("vnp_OrderInfo", "BookingID:" + booking.getId());
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl + "?orderId=" + booking.getId()+ "&paymentMethod=VNPAY");
+        vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl + "?orderId=" + booking.getId() + "&paymentMethod=VNPAY");
         vnp_Params.put("vnp_IpAddr", clientIp);
 
         // Add CreateDate and ExpireDate
@@ -92,7 +92,9 @@ public class VNPayService {
 
         return vnp_PayUrl + "?" + query;
     }
-    public String createPaymentUrlEvent(Integer eventId,Integer amount,String description, HttpServletRequest request) throws Exception {
+
+    public String createPaymentUrlEvent(Integer eventId, Integer amount, String description, HttpServletRequest request)
+            throws Exception {
         long deposit = amount * 100;
         String clientIp = getClientIp(request);
         String vnp_TxnRef = getRandomNumber(8); // Generate random TxnRef
@@ -107,7 +109,8 @@ public class VNPayService {
         vnp_Params.put("vnp_OrderInfo", "eventId:" + eventId);
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", "http://localhost:5173/deposit-result" + "?eventId=" + eventId+ "&paymentMethod=VNPAY");
+        vnp_Params.put("vnp_ReturnUrl", "https://testdeployevent-1.onrender.com/deposit-result" + "?eventId=" + eventId
+                + "&paymentMethod=VNPAY");
         vnp_Params.put("vnp_IpAddr", clientIp);
 
         // Add CreateDate and ExpireDate
@@ -150,6 +153,7 @@ public class VNPayService {
 
         return vnp_PayUrl + "?" + query;
     }
+
     private String hmacSHA512(String key, String data) throws Exception {
         Mac hmac512 = Mac.getInstance("HmacSHA512");
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
@@ -178,6 +182,7 @@ public class VNPayService {
         }
         return sb.toString();
     }
+
     public boolean verifyPayment(HttpServletRequest request) {
         try {
             // Lấy tất cả tham số từ request của VNPAY callback
@@ -217,6 +222,7 @@ public class VNPayService {
             return false;
         }
     }
+
     public String createAdsPaymentUrl(EventAds ads, HttpServletRequest request) throws Exception {
         long amount = Math.round(ads.getTotalPrice() * 100); // VND x100
         String clientIp = getClientIp(request);
@@ -233,7 +239,8 @@ public class VNPayService {
         vnp_Params.put("vnp_OrderType", "advertising");
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_IpAddr", clientIp);
-        vnp_Params.put("vnp_ReturnUrl", "http://localhost:5173/organizer/payment-ads-result" + "?adsId=" + ads.getId() + "&paymentMethod=VNPAY");
+        vnp_Params.put("vnp_ReturnUrl", "https://testdeployevent-1.onrender.com/organizer/payment-ads-result"
+                + "?adsId=" + ads.getId() + "&paymentMethod=VNPAY");
 
         // Thời gian tạo và hết hạn
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
